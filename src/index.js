@@ -1,5 +1,6 @@
 const { getRandomWordSync, getRandomWord } = require('word-maker');
 const fs = require('fs');
+const { performance } = require('perf_hooks');
 
 console.log('It works!');
 
@@ -104,7 +105,7 @@ async function asyncErrorFizzBuzz() {
 // Task 5 - Print to file
 // An alternative approach would be to append to the file during each iteration of the loop. This could
 // have it's use cases, however, in this scenario, it could result in a performance implication as the file
-// will have to be read and appended to during each iteration. Hence the approach used is to store the data
+// will have to be read and written to during each iteration. Hence the approach used is to store the data
 // in an Array and write to the file only once.
 async function asyncErrorPrintWordsToFile() {
   const words = [];
@@ -154,12 +155,34 @@ async function asyncErrorFizzBuzzToFile() {
   console.log('Success!');
 }
 
-// Bonus
+// BONUS TASKS
 // Print Ascending order - The solution already has the numbers printing in Ascending order.
 // To print in descending order, change the for loop to be:
 // for (let i = 100; i<=0 ; i--)
 
 // Solution to run in 1s
+async function simultaneousAsyncGetWords() {
+  console.log('Starting function');
+  const startTime = performance.now();
+  // Create an array of promises that can be used in Promise.all
+  let promises = [...Array(100).keys()].map(() => getRandomWord({ slow: true }));
+  let results = await Promise.all(promises);
+
+  // Iterate through the results creating sentences and print to file
+  let i = 0;
+  const sentences = results.map((word) => {
+    i++;
+    const sentence = `${i} : ${word}`;
+    console.log(sentence);
+    return sentence;
+  });
+
+  // Write to file
+  const sentencesJSON = JSON.stringify(sentences);
+  fs.writeFileSync('words.json', sentencesJSON);
+  const endTime = performance.now() - startTime;
+  console.log(`Completed in ${endTime}ms`);
+}
 
 // TEST SOLUTIONS - Uncomment the appropriate function to run it
 // printWords();
@@ -170,3 +193,6 @@ async function asyncErrorFizzBuzzToFile() {
 // asyncErrorFizzBuzz();
 // asyncErrorPrintWordsToFile();
 // asyncErrorFizzBuzzToFile();
+
+// BONUS TASKS
+// simultaneousAsyncGetWords();
