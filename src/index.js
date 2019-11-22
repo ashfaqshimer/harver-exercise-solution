@@ -161,4 +161,12 @@ async function asyncErrorFizzBuzzToFile() {
 
 // Solution to run in 1s
 
-const rando = asyncErrorFizzBuzzToFile();
+// TEST SOLUTIONS - Uncomment the appropriate function to run it
+// printWords();
+// fizzBuzz();
+// asyncPrintWords();
+// asyncFizzBuzz();
+// asyncErrorPrintWords();
+// asyncErrorFizzBuzz();
+// asyncErrorPrintWordsToFile();
+// asyncErrorFizzBuzzToFile();
