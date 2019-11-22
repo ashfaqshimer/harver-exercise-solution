@@ -158,7 +158,7 @@ async function asyncErrorFizzBuzzToFile() {
 // BONUS TASKS
 // Print Ascending order - The solution already has the numbers printing in Ascending order.
 // To print in descending order, change the for loop to be:
-// for (let i = 100; i<=0 ; i--)
+// for (let i = 100; i>0 ; i--)
 
 // Solution to run in 1s
 async function simultaneousAsyncGetWords() {
