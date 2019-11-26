@@ -162,26 +162,38 @@ async function asyncErrorFizzBuzzToFile() {
 
 // Solution to run in 1s
 async function simultaneousAsyncGetWords() {
-  console.log('Starting function');
-  const startTime = performance.now();
-  // Create an array of promises that can be used in Promise.all
-  let promises = [...Array(100).keys()].map(() => getRandomWord({ slow: true }));
-  let results = await Promise.all(promises);
+  try {
+    console.log('Starting function');
+    const startTime = performance.now();
+    // Create an array of promises that can be used in Promise.all
+    let promises = [...Array(100).keys()].map(() =>
+      getRandomWord({ slow: true, withErrors: true }).catch(() => console.log('Error'))
+    );
 
-  // Iterate through the results creating sentences and print to file
-  let i = 0;
-  const sentences = results.map((word) => {
-    i++;
-    const sentence = `${i} : ${word}`;
-    console.log(sentence);
-    return sentence;
-  });
+    let results = await Promise.all(promises);
 
-  // Write to file
-  const sentencesJSON = JSON.stringify(sentences);
-  fs.writeFileSync('words.json', sentencesJSON);
-  const endTime = performance.now() - startTime;
-  console.log(`Completed in ${endTime}ms`);
+    // Iterate through the results creating sentences and print to file
+    let i = 0;
+    const sentences = results.map((word) => {
+      i++;
+      if (!word) {
+        const sentence = `${i} : It shouldn't break anything`;
+        console.log(sentence);
+        return sentence;
+      }
+      const sentence = `${i} : ${word}`;
+      console.log(sentence);
+      return sentence;
+    });
+
+    // Write to file
+    const sentencesJSON = JSON.stringify(sentences);
+    fs.writeFileSync('words.json', sentencesJSON);
+    const endTime = performance.now() - startTime;
+    console.log(`Completed in ${endTime}ms`);
+  } catch (error) {
+    console.log('Error');
+  }
 }
 
 // TEST SOLUTIONS - Uncomment the appropriate function to run it
@@ -195,4 +207,4 @@ async function simultaneousAsyncGetWords() {
 // asyncErrorFizzBuzzToFile();
 
 // BONUS TASKS
-// simultaneousAsyncGetWords();
+simultaneousAsyncGetWords();
