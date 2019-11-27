@@ -167,9 +167,11 @@ async function simultaneousAsyncGetWords() {
     const startTime = performance.now();
     // Create an array of promises that can be used in Promise.all
     let promises = [...Array(100).keys()].map(() =>
-      getRandomWord({ slow: true, withErrors: true }).catch(() => console.log('Error'))
+      getRandomWord({ slow: true, withErrors: true }).catch(() => {
+        return;
+      })
     );
-
+    console.log(promises);
     let results = await Promise.all(promises);
 
     // Iterate through the results creating sentences and print to file
@@ -196,6 +198,42 @@ async function simultaneousAsyncGetWords() {
   }
 }
 
+async function simultaneousAsyncGetWords2() {
+  try {
+    console.log('Starting function');
+    const startTime = performance.now();
+    // Create an array of promises that can be used in Promise.all
+    let promises = [...Array(100).keys()].map(() =>
+      getRandomWord({ slow: true, withErrors: true })
+    );
+
+    let results = await Promise.allSettled(promises);
+
+    // Iterate through the results creating sentences and print to file
+    let i = 0;
+    const sentences = results.map((result) => {
+      i++;
+      if (result.status === 'rejected') {
+        const sentence = `${i} : It shouldn't break anything`;
+        console.log(sentence);
+        return sentence;
+      }
+
+      const sentence = `${i} : ${result.value}`;
+      console.log(sentence);
+      return sentence;
+    });
+
+    // Write to file
+    const sentencesJSON = JSON.stringify(sentences);
+    fs.writeFileSync('words.json', sentencesJSON);
+    const endTime = performance.now() - startTime;
+    console.log(`Completed in ${endTime}ms`);
+  } catch (error) {
+    console.log('Error');
+  }
+}
+
 // TEST SOLUTIONS - Uncomment the appropriate function to run it
 // printWords();
 // fizzBuzz();
@@ -207,4 +245,5 @@ async function simultaneousAsyncGetWords() {
 // asyncErrorFizzBuzzToFile();
 
 // BONUS TASKS
-simultaneousAsyncGetWords();
+// simultaneousAsyncGetWords();
+// simultaneousAsyncGetWords2();
